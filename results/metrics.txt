@@ -1,0 +1,20 @@
+data file: /home/claude/bbb-predictor/data/bbbp.csv
+n = 1935 (1485 penetrate / 450 blocked)
+1002 distinct Murcko scaffolds
+
+random split    ROC-AUC 0.844
+scaffold split  ROC-AUC 0.722  balanced accuracy 0.669
+gap             +0.122
+
+TPSA alone      ROC-AUC 0.700
+CNS rule        ROC-AUC 0.663
+5-fold CV       ROC-AUC 0.873 +/- 0.024
+
+tpsa               -1.6451
+h_donors           -0.7001
+h_acceptors        +0.3594
+logp               -0.2035
+fraction_csp3      +0.1809
+rotatable_bonds    -0.1543
+mol_weight         -0.1403
+aromatic_rings     +0.1116
