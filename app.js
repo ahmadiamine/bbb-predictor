@@ -69,11 +69,12 @@
              (c.ok ? "✓ " : "✕ ") + c.label + "</span>";
     }).join("");
     $("rule-note").textContent = rule.passes
-      ? "Passes the rule of thumb (" + rule.violations + " of 4 broken). On held-out "
-        + "chemistry this rule reaches ROC-AUC " + M.metrics.rule_auc.toFixed(2)
-        + ", against " + M.metrics.auc.toFixed(2) + " for the model."
-      : "Fails the rule of thumb (" + rule.violations + " of 4 broken). The model "
-        + "weighs the same properties continuously rather than as cutoffs.";
+      ? "Passes the rule of thumb (" + rule.violations + " of 4 broken). The rule "
+        + "can only answer yes or no; the model weighs the same properties on a "
+        + "sliding scale, so it can say \u201cborderline\u201d."
+      : "Fails the rule of thumb (" + rule.violations + " of 4 broken). The rule "
+        + "can only answer yes or no; the model weighs the same properties on a "
+        + "sliding scale, so it can say \u201cborderline\u201d.";
   }
 
   /* ---------------------------------------------------------------- plot */
@@ -218,6 +219,7 @@
     if ($("random-auc")) $("random-auc").textContent = m.random_auc.toFixed(3);
     if ($("scaffold-auc")) $("scaffold-auc").textContent = m.auc.toFixed(3);
     if ($("gap")) $("gap").textContent = m.gap.toFixed(3) + " ROC-AUC";
+    if (!$("scores")) return;
     $("scores").innerHTML = [
       [m.auc.toFixed(3), "ROC-AUC, scaffold split"],
       [m.tpsa_auc.toFixed(3), "polar surface area alone"],
