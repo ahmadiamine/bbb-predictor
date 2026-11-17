@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Does this molecule reach the brain?</title>
+<meta name="description" content="Draw any molecule and see whether a model trained on 1,935 measured compounds expects it to cross the blood-brain barrier.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="bar">
+  <span class="bar__name">Blood&ndash;brain barrier predictor</span>
+  <a class="bar__link" href="https://github.com/ahmadiamine/bbb-predictor">View the code</a>
+</header>
+
+<main>
+
+  <section class="intro">
+    <h1>Does this molecule reach the brain?</h1>
+    <p class="intro__lede">
+      The blood&ndash;brain barrier is a sheet of cells packed so tightly that
+      almost nothing slips between them. A drug has to dissolve straight through
+      them &mdash; which means shedding the water clinging to its polar groups
+      first. Draw a molecule and watch that logic play out.
+    </p>
+  </section>
+
+  <section class="lab">
+
+    <div class="panel">
+      <label class="field">
+        <span class="field__label">Molecule, as SMILES</span>
+        <textarea id="smiles" spellcheck="false" rows="2"
+                  placeholder="Cn1c(=O)c2c(ncn2C)n(C)c1=O">Cn1c(=O)c2c(ncn2C)n(C)c1=O</textarea>
+      </label>
+
+      <div class="chips" id="examples">
+        <button type="button" data-smiles="Cn1c(=O)c2c(ncn2C)n(C)c1=O">Caffeine</button>
+        <button type="button" data-smiles="CN1c2ccc(Cl)cc2C(=NCC1=O)c1ccccc1">Diazepam</button>
+        <button type="button" data-smiles="CN1CCC[C@H]1c1cccnc1">Nicotine</button>
+        <button type="button" data-smiles="NCCc1ccc(O)c(O)c1">Dopamine</button>
+        <button type="button" data-smiles="NC(Cc1ccc(O)c(O)c1)C(=O)O">L&#8209;DOPA</button>
+        <button type="button" data-smiles="OC[C@H]1O[C@](CO)(O[C@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)[C@@H](O)[C@@H]1O">Sucrose</button>
+      </div>
+
+      <p class="alert" id="alert" role="status" hidden></p>
+
+      <figure class="structure">
+        <div id="drawing" aria-live="polite"><p class="loading">Loading the chemistry engine&hellip;</p></div>
+        <figcaption id="formula"></figcaption>
+      </figure>
+
+      <div class="verdict">
+        <div class="verdict__head">
+          <span class="verdict__word" id="verdict-word">&mdash;</span>
+          <span class="verdict__num" id="verdict-num">&mdash;</span>
+        </div>
+        <div class="meter">
+          <div class="meter__fill" id="meter-fill"></div>
+          <div class="meter__mid" aria-hidden="true"></div>
+        </div>
+        <p class="verdict__scale" aria-hidden="true"><span>blocked</span><span>reaches the brain</span></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <table class="why">
+        <caption>What the model is reacting to</caption>
+        <thead>
+          <tr><th scope="col">Property</th><th scope="col">Value</th><th scope="col">Pull on the prediction</th></tr>
+        </thead>
+        <tbody id="why-body"></tbody>
+      </table>
+
+      <div class="rule" id="rule">
+        <h2 class="rule__title">The rule of thumb it competes with</h2>
+        <div class="rule__checks" id="rule-checks"></div>
+        <p class="rule__note" id="rule-note"></p>
+      </div>
+
+      <figure class="chart">
+        <svg id="plot" viewBox="0 0 440 320" role="img"
+             aria-label="Training molecules plotted by polar surface area and logP, with your molecule marked"></svg>
+        <figcaption>
+          All 1,935 measured molecules. Yours drops in as the outlined diamond.
+        </figcaption>
+        <div class="key">
+          <span class="key__item key__item--yes">reaches the brain</span>
+          <span class="key__item key__item--no">blocked</span>
+          <span class="key__item key__item--you">yours</span>
+        </div>
+      </figure>
+    </div>
+
+  </section>
+
+  <section class="prose">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li>
+        <h3>Measure eight things about the molecule</h3>
+        <p>Polar surface area, greasiness, hydrogen bond donors and acceptors,
+           weight, flexibility, aromatic rings, and how three-dimensional the
+           carbon skeleton is. RDKit computes all eight, here in your browser.</p>
+      </li>
+      <li>
+        <h3>Fit a logistic regression to 1,935 measured compounds</h3>
+        <p>Each one has a published measurement of whether it crosses. Nothing is
+           simulated and nothing is inferred from a rule &mdash; these are
+           laboratory observations.</p>
+      </li>
+      <li>
+        <h3>Test it on chemistry it has never seen</h3>
+        <p>Molecules are grouped by their core ring system, and whole groups are
+           held out together. Families like the benzodiazepines never get split
+           across training and test, so the model cannot answer by recognising a
+           close relative.</p>
+      </li>
+      <li>
+        <h3>Read back what it learned</h3>
+        <p>Polar surface area dominates every other descriptor, with hydrogen
+           bond donors second. That is the desolvation penalty, recovered from
+           data by a model that was never told the barrier exists.</p>
+      </li>
+    </ol>
+
+    <h2>How well it does</h2>
+    <p>
+      Tested on molecules whose chemical family the model never saw during
+      training &mdash; so it cannot score well by recognising a close relative it
+      already memorised.
+    </p>
+
+    <div class="scores" id="scores"></div>
+
+    <h2>What this cannot do</h2>
+    <ul class="caveats">
+      <li><strong>Passive diffusion only.</strong> The barrier runs active pumps,
+          notably P&#8209;glycoprotein, which grab molecules that got in and throw
+          them back out. Some compounds here look perfectly permeable and are
+          ejected anyway. Eight descriptors cannot see a transporter.</li>
+      <li><strong>Crossing is not the same as working.</strong> L&#8209;DOPA
+          reaches the brain by hitching a ride on an amino acid transporter, not
+          by diffusing; dopamine itself cannot. That pair is the whole reason
+          Parkinson's is treated with the precursor rather than the drug.</li>
+      <li><strong>The labels are coarse.</strong> A yes/no flag compresses a
+          continuous quantity &mdash; how much gets in, and how fast &mdash; into
+          one bit, and different sources drew the line differently.</li>
+      <li><strong>The classes are imbalanced.</strong> 77% of these molecules
+          cross, because the dataset is built largely from drugs that were being
+          developed for the brain in the first place.</li>
+      <li><strong>Nothing here has touched a cell.</strong> A prediction is a
+          reason to run the assay, not a substitute for it.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <p>Built by <a href="https://www.linkedin.com/in/mohamed-amine-ahmadi-29288b2b0/">Amine Ahmadi</a>
+     &mdash; <a href="https://github.com/ahmadiamine/bbb-predictor">source and data on GitHub</a></p>
+  <p>Chemistry by RDKit, compiled to WebAssembly. The model and the molecule
+     drawing both run entirely in your browser &mdash; nothing you type is sent anywhere.</p>
+</footer>
+
+<script src="model.js"></script>
+<script src="predict.js"></script>
+<script src="vendor/RDKit_minimal.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
