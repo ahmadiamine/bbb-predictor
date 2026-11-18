@@ -214,9 +214,10 @@
 
   function renderScores() {
     var m = M.metrics;
-    $("random-auc").textContent = m.random_auc.toFixed(3);
-    $("scaffold-auc").textContent = m.auc.toFixed(3);
-    $("gap").textContent = m.gap.toFixed(3) + " ROC-AUC";
+    if ($("random-auc")) $("random-auc").textContent = m.random_auc.toFixed(3);
+    if ($("scaffold-auc")) $("scaffold-auc").textContent = m.auc.toFixed(3);
+    if ($("gap")) $("gap").textContent = m.gap.toFixed(3) + " ROC-AUC";
+    if (!$("scores")) return;
     $("scores").innerHTML = [
       [m.auc.toFixed(3), "ROC-AUC, scaffold split"],
       [m.tpsa_auc.toFixed(3), "polar surface area alone"],
