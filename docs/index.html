@@ -126,24 +126,7 @@
       </li>
     </ol>
 
-    <h2>The number most projects report is wrong</h2>
-    <p>
-      Split these molecules at random and the model scores
-      <strong id="random-auc">&mdash;</strong>. Split them by chemical scaffold,
-      so that no core structure appears in both training and test, and the same
-      model scores <strong id="scaffold-auc">&mdash;</strong>.
-    </p>
-    <p>
-      The difference is <strong id="gap">&mdash;</strong> of pure optimism. Drug
-      datasets are full of close analogues &mdash; the same core with a methyl
-      group moved. A random split scatters those twins across both sides, so the
-      model is quietly being asked about molecules it has already met. Real drug
-      discovery never works that way: the molecule you care about is the one
-      nobody has made yet.
-    </p>
-    <p>
-      Everything quoted on this page is the scaffold-split number.
-    </p>
+  
 
     <div class="scores" id="scores"></div>
 
